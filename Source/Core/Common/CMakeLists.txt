@@ -198,6 +198,11 @@ elseif(WIN32)
     Logging/ConsoleListenerWin.cpp
     MemArenaWin.cpp
   )
+elseif(NINTENDO_SWITCH)
+  target_sources(common PRIVATE
+    Logging/ConsoleListenerNix.cpp
+    MemArenaSwitch.cpp
+  )
 else()
   target_sources(common PRIVATE
     Logging/ConsoleListenerNix.cpp

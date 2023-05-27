@@ -16,6 +16,12 @@
 #include "Core/PowerPC/PPCTables.h"
 #include "Core/PowerPC/PowerPC.h"
 
+#ifdef __SWITCH__
+#ifdef BIT
+#undef BIT
+#endif
+#endif
+
 using namespace Arm64Gen;
 
 void JitArm64::ps_mergeXX(UGeckoInstruction inst)

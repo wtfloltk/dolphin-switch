@@ -394,6 +394,8 @@ void SetUserDirectory(std::string custom_path)
   }
 #endif
 
+#elif defined(__SWITCH__)
+  user_path = "/switch/dolphin-emu";
 #else
   if (File::IsDirectory(ROOT_DIR DIR_SEP EMBEDDED_USER_DIR))
   {

@@ -126,6 +126,8 @@ void JitBase::ProtectStack()
 #ifdef _WIN32
   ULONG reserveSize = SAFE_STACK_SIZE;
   SetThreadStackGuarantee(&reserveSize);
+#elif defined(__SWITCH__)
+    // TODO: Switch stack protection
 #else
   auto [stack_addr, stack_size] = Common::GetCurrentThreadStack();
 

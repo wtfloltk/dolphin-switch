@@ -10,10 +10,19 @@
 #include "Common/CommonTypes.h"
 #include "Common/DynamicLibrary.h"
 
+#ifdef __SWITCH__
+struct VirtmemReservation;
+#include <map>
+#include <switch.h>
+#endif
+
 namespace Common
 {
 #ifdef _WIN32
 struct WindowsMemoryRegion;
+#elif defined(__SWITCH__)
+struct SwitchViewInfo;
+struct SwitchMapInfo;
 #endif
 
 // This class lets you create a block of anonymous RAM, and then arbitrarily map views into it.
@@ -115,6 +124,12 @@ private:
   void* m_address_UnmapViewOfFileEx = nullptr;
   void* m_address_VirtualAlloc2 = nullptr;
   void* m_address_MapViewOfFile3 = nullptr;
+#elif defined(__SWITCH__)
+  Handle m_cur_proc_handle;
+  void* m_memory;
+  std::map<void*, SwitchViewInfo> m_views;
+  VirtmemReservation* m_virtmem_resv;
+  std::map<void*, SwitchMapInfo> m_maps;
 #else
   int m_shm_fd = 0;
   void* m_reserved_region = nullptr;

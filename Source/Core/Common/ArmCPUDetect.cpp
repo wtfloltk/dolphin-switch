@@ -15,7 +15,7 @@
 #include <Windows.h>
 #include <arm64intr.h>
 #include "Common/WindowsRegistry.h"
-#else
+#elif !defined(__SWITCH__)
 #ifndef __FreeBSD__
 #include <asm/hwcap.h>
 #endif
@@ -248,7 +248,7 @@ void CPUInfo::Detect()
   {
     cpu_id = MIDRToString(reg);
   }
-#else
+#elif !defined(__SWITCH__)
   // Linux, Android, and FreeBSD
 
 #if defined(__FreeBSD__)

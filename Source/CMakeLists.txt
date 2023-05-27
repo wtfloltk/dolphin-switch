@@ -59,6 +59,11 @@ else()
   if (HAS_FORMAT_WARNING)
     check_and_add_flag(FORMAT_WARNING_TO_ERROR -Werror=format)
   endif()
+
+  check_cxx_compiler_flag(-Wreturn-type HAS_RETURN_TYPE_WARNING)
+  if (HAS_RETURN_TYPE_WARNING)
+    check_and_add_flag(RETURN_TYPE_WARNING_TO_ERROR -Werror=return-type)
+  endif()
 endif()
 
 # These aren't actually needed for C11/C++11

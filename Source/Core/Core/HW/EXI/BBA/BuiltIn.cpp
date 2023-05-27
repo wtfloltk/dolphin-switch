@@ -10,6 +10,10 @@
 #include <sys/types.h>
 #endif
 
+#ifdef __SWITCH__
+#include <arpa/inet.h>
+#endif
+
 #include "Common/BitUtils.h"
 #include "Common/Logging/Log.h"
 #include "Common/MsgHandler.h"

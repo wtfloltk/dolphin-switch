@@ -36,8 +36,6 @@ void IniFile::ParseLine(std::string_view line, std::string* keyOut, std::string*
   }
 }
 
-const std::string& IniFile::NULL_STRING = "";
-
 IniFile::Section::Section() = default;
 
 IniFile::Section::Section(std::string name_) : name{std::move(name_)}

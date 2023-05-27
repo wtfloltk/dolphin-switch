@@ -712,6 +712,13 @@ elseif(UNIX)
       HW/WiimoteReal/IOAndroid.h
     )
   endif()
+elseif(NINTENDO_SWITCH)
+  target_sources(core PRIVATE
+    HW/EXI/BBA/TAP_Unix.cpp
+    HW/EXI/BBA/XLINK_KAI_BBA.cpp
+    HW/EXI/BBA/BuiltIn.cpp
+    HW/EXI/BBA/BuiltIn.h
+  )
 endif()
 
 # Bluez doesn't support all the communication modes on FreeBSD, so only using it on Linux

@@ -391,7 +391,7 @@ static void CpuThread(const std::optional<std::string>& savestate_path, bool del
 
   s_is_started = true;
   {
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__SWITCH__)
     std::string gdb_socket = Config::Get(Config::MAIN_GDB_SOCKET);
     if (!gdb_socket.empty())
     {

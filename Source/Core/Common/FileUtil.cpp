@@ -290,7 +290,7 @@ bool Rename(const std::string& srcFilename, const std::string& destFilename)
   return !error;
 }
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__SWITCH__)
 static void FSyncPath(const char* path)
 {
   int fd = open(path, O_RDONLY);
@@ -317,7 +317,7 @@ bool RenameSync(const std::string& srcFilename, const std::string& destFilename)
       ERROR_LOG_FMT(COMMON, "{} sync failed on {}: {}", __func__, srcFilename, err);
     close(fd);
   }
-#else
+#elif !defined(__SWITCH__)
   char* path = strdup(srcFilename.c_str());
   FSyncPath(path);
   FSyncPath(dirname(path));

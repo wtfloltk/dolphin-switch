@@ -177,6 +177,11 @@ std::string StringFromFormatV(const char* format, va_list args)
 
   std::string temp = buf;
   delete[] buf;
+#elif defined(__SWITCH__)
+  char tmp[256];
+  vsnprintf(tmp, sizeof(tmp), format, args);
+  buf = tmp;
+  std::string temp = buf;
 #else
 #if !defined(ANDROID) && !defined(__HAIKU__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
   locale_t previousLocale = uselocale(GetCLocale());

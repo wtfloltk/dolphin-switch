@@ -12,6 +12,9 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#ifdef __SWITCH__
+#include <arpa/inet.h>
+#endif
 #else
 #include <WinSock2.h>
 #endif

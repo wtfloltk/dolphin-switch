@@ -6,6 +6,8 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <processthreadsapi.h>
+#elif defined(__SWITCH__)
+#include <switch.h>
 #else
 #include <pthread.h>
 #include <unistd.h>
@@ -175,6 +177,8 @@ void SetCurrentThreadName(const char* name)
   pthread_setname_np(pthread_self(), "%s", const_cast<char*>(name));
 #elif defined __HAIKU__
   rename_thread(find_thread(nullptr), name);
+#elif defined(__SWITCH__)
+  // TODO
 #else
   // linux doesn't allow to set more than 16 bytes, including \0.
   pthread_setname_np(pthread_self(), std::string(name).substr(0, 15).c_str());
@@ -191,6 +195,10 @@ std::tuple<void*, size_t> GetCurrentThreadStack()
   void* stack_addr;
   size_t stack_size;
 
+#if defined(__SWITCH__)
+  svcGetInfo((u64*)&stack_addr, InfoType_StackRegionAddress, INVALID_HANDLE, 0);
+  svcGetInfo(&stack_size, InfoType_StackRegionSize, INVALID_HANDLE, 0);
+#else
   pthread_t self = pthread_self();
 
 #ifdef __APPLE__
@@ -217,7 +225,7 @@ std::tuple<void*, size_t> GetCurrentThreadStack()
 
   pthread_attr_destroy(&attr);
 #endif
-
+#endif
   return std::make_tuple(stack_addr, stack_size);
 }
 

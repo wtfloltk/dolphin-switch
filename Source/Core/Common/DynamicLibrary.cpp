@@ -9,8 +9,10 @@
 
 #include "Common/Assert.h"
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <Windows.h>
+#elif defined(__SWITCH__)
+// TODO
 #else
 #include <dlfcn.h>
 #endif
@@ -35,6 +37,8 @@ std::string DynamicLibrary::GetUnprefixedFilename(const char* filename)
   return std::string(filename) + ".dll";
 #elif defined(__APPLE__)
   return std::string(filename) + ".dylib";
+#elif defined(__SWITCH__)
+  return std::string(filename) + ".nro";
 #else
   return std::string(filename) + ".so";
 #endif
@@ -57,6 +61,8 @@ std::string DynamicLibrary::GetVersionedFilename(const char* libname, int major,
     return fmt::format("{}{}.{}.dylib", prefix, libname, major);
   else
     return fmt::format("{}{}.dylib", prefix, libname);
+#elif defined(__SWITCH__)
+  return fmt::format("{}.nro", libname);
 #else
   const char* prefix = std::strncmp(libname, "lib", 3) ? "lib" : "";
   if (major >= 0 && minor >= 0)
@@ -70,8 +76,11 @@ std::string DynamicLibrary::GetVersionedFilename(const char* libname, int major,
 
 bool DynamicLibrary::Open(const char* filename)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
   m_handle = reinterpret_cast<void*>(LoadLibraryA(filename));
+#elif defined(__SWITCH__)
+  // TODO
+  m_handle = nullptr;
 #else
   m_handle = dlopen(filename, RTLD_NOW);
 #endif
@@ -83,8 +92,10 @@ void DynamicLibrary::Close()
   if (!IsOpen())
     return;
 
-#ifdef _WIN32
+#if defined(_WIN32)
   FreeLibrary(reinterpret_cast<HMODULE>(m_handle));
+#elif defined(__SWITCH__)
+    // TODO
 #else
   dlclose(m_handle);
 #endif
@@ -93,8 +104,11 @@ void DynamicLibrary::Close()
 
 void* DynamicLibrary::GetSymbolAddress(const char* name) const
 {
-#ifdef _WIN32
+#if defined(_WIN32)
   return reinterpret_cast<void*>(GetProcAddress(reinterpret_cast<HMODULE>(m_handle), name));
+#elif defined(__SWITCH__)
+  // TODO
+  return nullptr;
 #else
   return reinterpret_cast<void*>(dlsym(m_handle, name));
 #endif

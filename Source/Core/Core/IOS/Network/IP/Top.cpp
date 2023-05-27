@@ -41,10 +41,12 @@
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 
 #else
-#include <arpa/inet.h>
+#ifndef __SWITCH__
 #include <ifaddrs.h>
-#include <netinet/in.h>
 #include <resolv.h>
+#endif
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -224,6 +226,8 @@ static std::optional<DefaultInterface> GetSystemDefaultInterface()
   const u32 gateway = GetNetworkGateway();
   if (addr || netmask || gateway)
     return DefaultInterface{addr, netmask, gateway};
+#elif defined(__SWITCH__)
+  // TODO
 #else
   // Assume that the address that is used to access the Internet corresponds
   // to the default interface.

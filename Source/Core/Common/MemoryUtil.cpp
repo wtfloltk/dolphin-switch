@@ -12,9 +12,11 @@
 #include "Common/Logging/Log.h"
 #include "Common/MsgHandler.h"
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <windows.h>
 #include "Common/StringUtil.h"
+#elif defined(__SWITCH__)
+#include <switch.h>
 #else
 #include <pthread.h>
 #include <stdio.h>
@@ -38,6 +40,25 @@ void* AllocateExecutableMemory(size_t size)
 {
 #if defined(_WIN32)
   void* ptr = VirtualAlloc(nullptr, size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+#elif defined(__SWITCH__)
+  // TODO: Switch
+  void* mem = aligned_alloc(0x1000, size);
+  PanicAlertFmt("AllocateExecutableMemory: size: 0x{:08X}, m_memory: {}\n", size, mem);
+
+  u64 value = 0;
+  svcGetInfo(&value, (InfoType)65001, INVALID_HANDLE, 0);
+  Handle m_cur_proc_handle = (Handle)value;
+
+  virtmemLock();
+  void* ptr = virtmemFindCodeMemory(size, 0x1000);
+
+  Result r = svcMapProcessCodeMemory(m_cur_proc_handle, (u64)ptr, (u64)mem, size);
+  PanicAlertFmt("svcMapProcessCodeMemory: 0x{:X}\n", r);
+
+  r = svcSetProcessMemoryPermission(m_cur_proc_handle, (u64)ptr, size, Perm_Rw);
+  PanicAlertFmt("svcSetProcessMemoryPermission: 0x{:X}\n", r);
+
+  virtmemUnlock();
 #else
   int map_flags = MAP_ANON | MAP_PRIVATE;
 #if defined(__APPLE__)
@@ -129,8 +150,11 @@ void JITPageWriteDisableExecuteEnable()
 
 void* AllocateMemoryPages(size_t size)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
   void* ptr = VirtualAlloc(nullptr, size, MEM_COMMIT, PAGE_READWRITE);
+#elif defined(__SWITCH__)
+  // TODO: Switch
+  void* ptr = aligned_alloc(0x1000, size);
 #else
   void* ptr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 
@@ -148,6 +172,8 @@ void* AllocateAlignedMemory(size_t size, size_t alignment)
 {
 #ifdef _WIN32
   void* ptr = _aligned_malloc(size, alignment);
+#elif defined(__SWITCH__)
+  void* ptr = aligned_alloc(alignment, size);
 #else
   void* ptr = nullptr;
   if (posix_memalign(&ptr, alignment, size) != 0)
@@ -164,9 +190,11 @@ void FreeMemoryPages(void* ptr, size_t size)
 {
   if (ptr)
   {
-#ifdef _WIN32
+#if defined(_WIN32)
     if (!VirtualFree(ptr, 0, MEM_RELEASE))
       PanicAlertFmt("FreeMemoryPages failed!\nVirtualFree: {}", GetLastErrorString());
+#elif defined(__SWITCH__)
+    free(ptr);
 #else
     if (munmap(ptr, size) != 0)
       PanicAlertFmt("FreeMemoryPages failed!\nmunmap: {}", LastStrerrorString());
@@ -188,10 +216,12 @@ void FreeAlignedMemory(void* ptr)
 
 void ReadProtectMemory(void* ptr, size_t size)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
   DWORD oldValue;
   if (!VirtualProtect(ptr, size, PAGE_NOACCESS, &oldValue))
     PanicAlertFmt("ReadProtectMemory failed!\nVirtualProtect: {}", GetLastErrorString());
+#elif defined(__SWITCH__)
+  // TODO: Switch
 #else
   if (mprotect(ptr, size, PROT_NONE) != 0)
     PanicAlertFmt("ReadProtectMemory failed!\nmprotect: {}", LastStrerrorString());
@@ -200,10 +230,12 @@ void ReadProtectMemory(void* ptr, size_t size)
 
 void WriteProtectMemory(void* ptr, size_t size, bool allowExecute)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
   DWORD oldValue;
   if (!VirtualProtect(ptr, size, allowExecute ? PAGE_EXECUTE_READ : PAGE_READONLY, &oldValue))
     PanicAlertFmt("WriteProtectMemory failed!\nVirtualProtect: {}", GetLastErrorString());
+#elif defined(__SWITCH__)
+  // TODO: Switch
 #elif !(defined(_M_ARM_64) && defined(__APPLE__))
   // MacOS 11.2 on ARM does not allow for changing the access permissions of pages
   // that were marked executable, instead it uses the protections offered by MAP_JIT
@@ -215,10 +247,12 @@ void WriteProtectMemory(void* ptr, size_t size, bool allowExecute)
 
 void UnWriteProtectMemory(void* ptr, size_t size, bool allowExecute)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
   DWORD oldValue;
   if (!VirtualProtect(ptr, size, allowExecute ? PAGE_EXECUTE_READWRITE : PAGE_READWRITE, &oldValue))
     PanicAlertFmt("UnWriteProtectMemory failed!\nVirtualProtect: {}", GetLastErrorString());
+#elif defined(__SWITCH__)
+  // TODO: Switch
 #elif !(defined(_M_ARM_64) && defined(__APPLE__))
   // MacOS 11.2 on ARM does not allow for changing the access permissions of pages
   // that were marked executable, instead it uses the protections offered by MAP_JIT
@@ -256,6 +290,9 @@ size_t MemPhysical()
   system_info sysinfo;
   get_system_info(&sysinfo);
   return static_cast<size_t>(sysinfo.max_pages * B_PAGE_SIZE);
+#elif defined __SWITCH__
+  // TODO: Switch
+  return 0;
 #else
   struct sysinfo memInfo;
   sysinfo(&memInfo);

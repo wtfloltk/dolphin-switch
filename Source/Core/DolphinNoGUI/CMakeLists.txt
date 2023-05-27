@@ -38,3 +38,14 @@ endif()
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} dolphin-nogui)
 install(TARGETS dolphin-nogui RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+if(NINTENDO_SWITCH)
+  nx_generate_nacp(dolphin-nogui.nacp
+    NAME dolphin-nogui
+    AUTHOR "Dolphin authors"
+    VERSION "${DOLPHIN_VERSION_MAJOR}.${DOLPHIN_VERSION_MINOR}.${DOLPHIN_VERSION_PATCH}"
+  )
+
+  nx_create_nro(dolphin-nogui
+    NACP dolphin-nogui.nacp
+  )
+endif()

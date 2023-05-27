@@ -137,6 +137,12 @@ Android apps are compiled using a build system called Gradle. Dolphin's native c
 however, is compiled using CMake. The Gradle script will attempt to run a CMake build
 automatically while building the Java code.
 
+## Building for Nintendo Switch
+
+devkitPro and libnx are required.
+
+Then use `aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=$DEVKITPRO/cmake/Switch.cmake` as `cmake`.
+
 ## Uninstalling
 
 On Windows, simply remove the extracted directory, unless it was installed with the NSIS installer,

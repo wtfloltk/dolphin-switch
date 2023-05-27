@@ -3,7 +3,10 @@
 
 #include "InputCommon/GCAdapter.h"
 
-#ifndef ANDROID
+#if defined(__SWITCH__)
+#define GCADAPTER_USE_LIBUSB_IMPLEMENTATION false
+#define GCADAPTER_USE_ANDROID_IMPLEMENTATION false
+#elif !defined(ANDROID)
 #define GCADAPTER_USE_LIBUSB_IMPLEMENTATION true
 #define GCADAPTER_USE_ANDROID_IMPLEMENTATION false
 #else
@@ -969,6 +972,8 @@ bool IsDetected(const char** error_message)
   return false;
 #elif GCADAPTER_USE_ANDROID_IMPLEMENTATION
   return s_detected;
+#else
+  return false;
 #endif
 }
 

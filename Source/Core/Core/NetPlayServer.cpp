@@ -78,7 +78,7 @@
 #ifdef __HAIKU__
 #define _BSD_SOURCE
 #include <bsd/ifaddrs.h>
-#elif !defined ANDROID
+#elif !defined(ANDROID) && !defined(__SWITCH__)
 #include <ifaddrs.h>
 #endif
 #include <arpa/inet.h>
@@ -2303,7 +2303,7 @@ std::vector<std::pair<std::string, std::string>> NetPlayServer::GetInterfaceList
   std::vector<std::pair<std::string, std::string>> result;
 #if defined(_WIN32)
 
-#elif defined(ANDROID)
+#elif defined(ANDROID) || defined(__SWITCH__)
 // Android has no getifaddrs for some stupid reason.  If this
 // functionality ends up actually being used on Android, fix this.
 #else

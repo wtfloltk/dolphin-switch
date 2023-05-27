@@ -98,7 +98,12 @@
 
     #endif
 
-#else
+	#elif defined(__SWITCH__)
+
+		// Nintendo Switch
+		#define SFML_SYSTEM_SWITCH
+
+	#else
 
     // Unsupported system
     #error This operating system is not supported by SFML library

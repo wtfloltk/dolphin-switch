@@ -17,6 +17,13 @@
 #include <Windows.h>
 #endif
 
+#ifdef __SWITCH__
+#include <arpa/inet.h>
+#include <switch.h>
+#include <sys/socket.h>
+#include "Common/Logging/LogManager.h"
+#endif
+
 #include "Common/ScopeGuard.h"
 #include "Common/StringUtil.h"
 #include "Core/Boot/Boot.h"
@@ -181,6 +188,19 @@ static std::unique_ptr<Platform> GetPlatform(const optparse::Values& options)
 
 int main(int argc, char* argv[])
 {
+#ifdef __SWITCH__
+  consoleDebugInit(debugDevice_SVC);
+  socketInitializeDefault();
+  inet_pton(AF_INET, "192.168.0.38", &__nxlink_host);
+  /* Port 28771 (nc -kl 28771) */
+  nxlinkStdio();
+
+  char* arguments[] = {"dolphin-emu", "--exec", "/switch/dolphin-emu/test.dol"};
+
+  argv = arguments;
+  argc = sizeof(arguments) / sizeof(arguments[0]);
+#endif
+
   auto parser = CommandLineParse::CreateParser(CommandLineParse::ParserOptions::OmitGUIOptions);
   parser->add_option("-p", "--platform")
       .action("store")
@@ -263,6 +283,11 @@ int main(int argc, char* argv[])
   UICommon::Init();
   UICommon::InitControllers(wsi);
 
+#ifdef __SWITCH__
+  auto* const log_manager = Common::Log::LogManager::GetInstance();
+  log_manager->SetLogLevel(Common::Log::LogLevel::LDEBUG);
+#endif
+
   Common::ScopeGuard ui_common_guard([] {
     UICommon::ShutdownControllers();
     UICommon::Shutdown();
@@ -282,7 +307,7 @@ int main(int argc, char* argv[])
 #ifdef _WIN32
   signal(SIGINT, signal_handler);
   signal(SIGTERM, signal_handler);
-#else
+#elif !defined(__SWITCH__)
   // Shut down cleanly on SIGINT and SIGTERM
   struct sigaction sa;
   sa.sa_handler = signal_handler;

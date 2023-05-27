@@ -237,6 +237,13 @@ typedef mcontext_t SContext;
 #else
 #error No context definition for machine
 #endif
+#elif defined(__SWITCH__)
+#include <switch.h>
+typedef ThreadExceptionDump SContext;
+#define CTX_REG(i) cpu_gprs[i].x
+#define CTX_LR lr.x
+#define CTX_SP sp.x
+#define CTX_PC pc.x
 #else
 #error No context definition for OS
 #endif

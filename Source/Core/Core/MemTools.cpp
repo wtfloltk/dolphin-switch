@@ -39,6 +39,10 @@
 #endif
 #endif
 
+#if defined(__SWITCH__)
+#include <switch.h>
+#endif
+
 namespace EMM
 {
 #ifdef _WIN32
@@ -362,6 +366,33 @@ void UninstallExceptionHandler()
 #ifdef __APPLE__
   sigaction(SIGBUS, &old_sa_bus, nullptr);
 #endif
+}
+
+bool IsExceptionHandlerSupported()
+{
+  return true;
+}
+#elif defined(__SWITCH__)
+
+extern "C" {
+
+alignas(16) u8 __nx_exception_stack[0x8000];
+u64 __nx_exception_stack_size = 0x8000;
+
+void __libnx_exception_handler(ThreadExceptionDump* ctx);
+
+void __libnx_exception_handler(ThreadExceptionDump* ctx)
+{
+  Core::System::GetInstance().GetJitInterface().HandleFault(ctx->far.x, ctx);
+}
+}
+
+void InstallExceptionHandler()
+{
+}
+
+void UninstallExceptionHandler()
+{
 }
 
 bool IsExceptionHandlerSupported()

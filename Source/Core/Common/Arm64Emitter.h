@@ -18,6 +18,12 @@
 #include "Common/CommonTypes.h"
 #include "Common/MathUtil.h"
 
+#ifdef __SWITCH__
+#ifdef BIT
+#undef BIT
+#endif
+#endif
+
 namespace Arm64Gen
 {
 // X30 serves a dual purpose as a link register
