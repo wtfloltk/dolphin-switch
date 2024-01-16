@@ -24,7 +24,8 @@ jobs:
 
     - name: make 
       run: |
-        aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake 
+        chmod +x aarch64-none-elf-cmake
+        ./aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake 
         mkdir nxout; for i in *; do for j in "$i".nro; do cp -r "$j" nxout; done; done;
 
     - name: upload
