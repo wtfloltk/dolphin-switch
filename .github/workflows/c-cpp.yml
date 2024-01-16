@@ -16,6 +16,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: libnx
       run: |
+        export DEVKITPRO=/opt/devkitpro
+        export DEVKITA64=/opt/devkitpro/devkitA64
         git clone --recursive https://github.com/switchbrew/libnx.git
         cd libnx
         make install
