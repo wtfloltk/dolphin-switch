@@ -24,6 +24,8 @@ jobs:
 
     - name: make 
       run: |
+        git submodule add git@github.com:arsenm/sanitizers-cmake.git externals/sanitizers-cmake
+        git submodule add git@github.com:fmtlib/fmt.git externals/fmt
         chmod +x aarch64-none-elf-cmake
         ./aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake 
         mkdir nxout; for i in *; do for j in "$i".nro; do cp -r "$j" nxout; done; done;
