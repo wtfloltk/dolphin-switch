@@ -21,7 +21,10 @@ jobs:
         git clone --recursive https://github.com/switchbrew/libnx.git
         cd libnx
         make install
-        sudo make install
+        sudo su
+        export DEVKITPRO=/opt/devkitpro
+        export DEVKITA64=/opt/devkitpro/devkitA64
+        make install
     - name: make 
       run: |
         aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake 
