@@ -24,6 +24,7 @@ jobs:
 
     - name: make 
       run: |
+        git config --global --add safe.directory /__w/dolphin-switch/dolphin-switch
         git submodule add git@github.com:arsenm/sanitizers-cmake.git externals/sanitizers-cmake
         git submodule add git@github.com:fmtlib/fmt.git externals/fmt
         chmod +x aarch64-none-elf-cmake
