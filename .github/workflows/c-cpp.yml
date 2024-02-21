@@ -14,8 +14,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: sanity cmake
       run: |
+        sudo apt install *gcc gcc* *g++ g++*
         git clone --recursive https://github.com/arsenm/sanitizers-cmake.git
         cd sanitizers-cmake
         cmake .
