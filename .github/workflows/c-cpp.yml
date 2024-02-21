@@ -19,7 +19,8 @@ jobs:
       run: |
         sudo apt update
         sudo apt install '*gcc' 'gcc' 'g++' 'ssh' -y
-        git clone --recursive https://github.com/arsenm/sanitizers-cmake.git
+        mkdir externals
+        git clone --recursive https://github.com/arsenm/sanitizers-cmake.git externals/sanitizers-cmake
         cd sanitizers-cmake
         cmake .
         sudo make -j666
@@ -36,9 +37,6 @@ jobs:
       run: |
         dkp-pacman -Syu switch-dev switch-portlibs --noconfirm
         git config --global --add safe.directory /__w/dolphin-switch/dolphin-switch
-        mkdir externals
-        git submodule add git@github.com:arsenm/sanitizers-cmake.git externals/sanitizers-cmake
-        set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
         chmod +x aarch64-none-elf-cmake
         sudo cp -r sanitizers-cmake/* .
         ./aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake 
