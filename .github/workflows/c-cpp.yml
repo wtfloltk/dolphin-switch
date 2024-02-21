@@ -18,9 +18,13 @@ jobs:
       run: |
         export DEVKITPRO=/opt/devkitpro
         export DEVKITA64=/opt/devkitpro/devkitA64
+        mkdir libnx
+        cp -r ../libnxyolo/* libnx/
         git clone --recursive https://github.com/switchbrew/libnx.git
         cd libnx
         make install
+        mkdir ../libnxyolo
+        cp -r ./* ../libnxyolo
 
     - name: make 
       run: |
