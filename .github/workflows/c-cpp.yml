@@ -24,12 +24,8 @@ jobs:
 
     - name: make 
       run: |
+        dkp-pacman -Syu switch-dev switch-portlibs
         git config --global --add safe.directory /__w/dolphin-switch/dolphin-switch
-        apt update
-        apt install ssh -y
-        apt full-upgrade -y
-        git submodule add https://github.com/arsenm/sanitizers-cmake externals/sanitizers-cmake
-        git submodule add https://github.com/fmtlib/fmt.git externals/fmt
         chmod +x aarch64-none-elf-cmake
         ./aarch64-none-elf-cmake -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake 
         mkdir nxout; for i in *; do for j in "$i".nro; do cp -r "$j" nxout; done; done;
