@@ -17,6 +17,9 @@ jobs:
     
     - name: sanity cmake
       run: |
+        sudo apt update
+        sudo apt install *saniti*make* -y
+        sudo apt update
         sudo apt install '*gcc' 'gcc' 'g++' -y
         git clone --recursive https://github.com/arsenm/sanitizers-cmake.git
         cd sanitizers-cmake
@@ -33,7 +36,6 @@ jobs:
 
     - name: make 
       run: |
-        sudo apt install *saniti*make* -y
         dkp-pacman -Syu switch-dev switch-portlibs --noconfirm
         git config --global --add safe.directory /__w/dolphin-switch/dolphin-switch
         chmod +x aarch64-none-elf-cmake
