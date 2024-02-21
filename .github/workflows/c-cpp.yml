@@ -18,7 +18,7 @@ jobs:
     - name: sanity cmake
       run: |
         sudo apt update
-        sudo apt install '*gcc' 'gcc' 'g++' -y
+        sudo apt install '*gcc' 'gcc' 'g++' 'ssh' -y
         git clone --recursive https://github.com/arsenm/sanitizers-cmake.git
         cd sanitizers-cmake
         cmake .
