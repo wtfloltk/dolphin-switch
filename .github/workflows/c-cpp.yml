@@ -14,16 +14,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: sanity cmake
+      run: |
+        git clone --recursive https://github.com/arsenm/sanitizers-cmake.git
+        cd sanitizers-cmake
+        cmake .
+        sudo make install
+        
     - name: libnx
       run: |
         export DEVKITPRO=/opt/devkitpro
         export DEVKITA64=/opt/devkitpro/devkitA64
-        ((sudo mkdir /libnxyolo && echo 'libnxyolo dir created as it did not exist'););
-        sudo cp -r /libnxyolo ./libnx
         git clone --recursive https://github.com/switchbrew/libnx.git
         cd libnx
         make install -j66
-        sudo cp -r ./* /libnxyolo
 
     - name: make 
       run: |
