@@ -25,7 +25,7 @@ jobs:
         cmake .
         sudo make -j666
         cd ..
-        cp -r sanitizers-cmake cubeb
+        cp -r sanitizers-cmake/* ..
         
     - name: libnx
       run: |
