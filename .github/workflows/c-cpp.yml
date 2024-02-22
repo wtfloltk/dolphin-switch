@@ -21,7 +21,7 @@ jobs:
         sudo apt install '*gcc' 'gcc' 'g++' 'ssh' -y
         mkdir externals
         git clone --recursive https://github.com/arsenm/sanitizers-cmake.git externals/sanitizers-cmake
-        cd sanitizers-cmake
+        cd externals/sanitizers-cmake
         cmake .
         sudo make -j666
         
