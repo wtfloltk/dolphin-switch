@@ -24,6 +24,8 @@ jobs:
         cd externals/sanitizers-cmake
         cmake .
         sudo make -j666
+        cd ..
+        cp -r sanitizers-cmake cubeb
         
     - name: libnx
       run: |
